@@ -1,6 +1,5 @@
-
-
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.AspNetCore.Mvc;
 
 public class AccountManager : IAccountManager
 {
@@ -21,7 +20,23 @@ public class AccountManager : IAccountManager
         {
             Console.WriteLine("Account with name " + account.Name + " already exists."); 
             return;
-        } 
+        }
+        string[] domens = new string[3]{"ru", "com", "com"};
+
+        if(account.Name.Contains("@")
+        && account.Name.Contains(".")
+        && account.Name.Length > 5
+        && account.Name.Length < 50
+        && domens.Any(d => account.Name.Split('.').Last().Contains(d)))
+        {
+            account.Email = account.Name;
+            account.Name = account.Name.Split('@').First();
+            Console.WriteLine($"Email of{account.Name} is valid.");
+        }
+        else
+        {
+            account.Email = account.Name;
+        }
         account.ID = _context.Users.Count() + 1;    
         _context.Users.Add(account); 
         _context.SaveChanges();
@@ -43,6 +58,7 @@ public class AccountManager : IAccountManager
         {
             CurrentUser = account;
             Console.WriteLine("Account verified."); 
+            Logger(account, "Verify account");
             return true;    
         }
         else 
@@ -50,5 +66,11 @@ public class AccountManager : IAccountManager
             Console.WriteLine("Account not verified."); 
             return false; 
         }    
+    }
+
+    private static void Logger(User account, string action)
+    {
+        string logMessage = $"[{DateTime.Now}] {account.Name}, {account.Password}, {action}\n";
+        File.AppendAllText("ActionsLog.csv", logMessage);
     }
 }   
