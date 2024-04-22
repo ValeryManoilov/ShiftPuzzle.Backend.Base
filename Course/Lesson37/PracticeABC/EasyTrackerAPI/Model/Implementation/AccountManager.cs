@@ -6,7 +6,7 @@ public class AccountManager : IAccountManager
 {
     private readonly AccountContext _context;
 
-    public  static User CurrentUser;    
+    public static User CurrentUser;    
 
     public AccountManager(AccountContext context)
     {
@@ -22,6 +22,24 @@ public class AccountManager : IAccountManager
             Console.WriteLine("Account with name " + account.Name + " already exists."); 
             return;
         } 
+
+        string[] domains = new string[]{"ru", "com", "net"};
+
+        if (account.Email.Contains("@") 
+            && account.Email.Contains(".") 
+            && account.Email.Length > 5 
+            && account.Email.Length < 50 
+            && domains.Any(d => account.Email.Split('@').Last().Contains(d)))
+        {
+            Console.WriteLine("Email of user: " + account.Name + " is valid.");
+            account.IsVerified = true;
+        }
+        else
+        {
+            Console.WriteLine("Invalid email format for user: "+account.Name);
+            account.IsVerified = false;
+        }
+        
         account.ID = _context.Users.Count() + 1;    
         _context.Users.Add(account); 
         _context.SaveChanges();
