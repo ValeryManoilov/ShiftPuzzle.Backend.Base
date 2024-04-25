@@ -1,14 +1,13 @@
 using System.Text.Json.Serialization;
-using Microsoft.EntityFrameworkCore; 
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAuthentication("Bearer").AddJwtBearer();
-builder.Services.AddAutorization();
-builder.Services.AddIdentityCore<IdentityUser>().AddEntityFrameworkStores<AccountContext>();
-builder.Services.AddScoped<UserManager<IdentityUser>>();
-builder.Services.AddScoped<SignInManager<IdentityUser>>();
+builder.Services.AddAuthorization();
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -16,6 +15,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
  
+builder.Services.AddIdentityCore<IdentityUser>().AddEntityFrameworkStores<AccountContext>();
+builder.Services.AddScoped<UserManager<IdentityUser>>();
+builder.Services.AddScoped<SignInManager<IdentityUser>>();
 // builder.Services.AddSingleton<ITaskManager>(provider =>
 // {
 //     var optionsBuilder = new DbContextOptionsBuilder<TaskTrackerContext>();

@@ -53,30 +53,4 @@ public class AccountManager : IAccountManager
         return _userManager.Users.Select(u => new User { Name = u.UserName, Email = u.Email }).ToList(); 
     }
 
-    public bool VerifyAccount(User account)
-    {
-        User user = _context.Users.FirstOrDefault(u => u.Name == account.Name 
-        && u.Password == account.Password);
-
-        if (user != null)
-        {
-            CurrentUser = user;
-            Console.WriteLine("Account verified");
-            Logger(user);
-            user.IsVerified = true;
-            return true;
-        }
-        else
-        {
-            Console.WriteLine("Account not verified");
-            user.IsVerified = false;
-            return false;
-        }
-    }
-
-    private static void Logger(User account)
-    {
-        string logMessage = $"{account.Name}, {account.Password}, {DateTime.Now}\n";
-        File.AppendAllText("ActionLog.csv", logMessage);
-    }
 }   
